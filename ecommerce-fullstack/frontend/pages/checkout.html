@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ShopHub</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="../index.html"><h1>🛍️ ShopHub</h1></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="form-container" style="max-width: 600px;">
+        <h2>Checkout</h2>
+        <form id="checkoutForm">
+            <h3>Shipping Address</h3>
+            <div class="form-group">
+                <label for="street">Street Address</label>
+                <input type="text" id="street" required>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" required>
+            </div>
+            <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" id="state" required>
+            </div>
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" required>
+            </div>
+            <div class="form-group">
+                <label for="zipCode">Zip Code</label>
+                <input type="text" id="zipCode" required>
+            </div>
+            <div class="form-group">
+                <label for="paymentMethod">Payment Method</label>
+                <select id="paymentMethod" required>
+                    <option value="card">Credit/Debit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="cod">Cash on Delivery</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Place Order</button>
+        </form>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Protect page - must be logged in
+        if (!isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+        
+        document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const shippingAddress = {
+                street: document.getElementById('street').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                country: document.getElementById('country').value,
+                zipCode: document.getElementById('zipCode').value,
+            };
+            
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            
+            try {
+                const data = await apiCall('/orders', {
+                    method: 'POST',
+                    body: JSON.stringify({ shippingAddress, paymentMethod })
+                });
+                
+                showMessage('Order placed successfully!', 'success');
+                setTimeout(() => window.location.href = 'orders.html', 1500);
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
